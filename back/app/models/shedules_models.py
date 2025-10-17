@@ -1,5 +1,8 @@
 from sqlmodel import Field, Relationship, SQLModel
-from .groups_models import Group
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .groups_models import Group
 
 
 class Schedule(SQLModel, table=True):
@@ -9,7 +12,7 @@ class Schedule(SQLModel, table=True):
     begin : int
     end: int
 
-    group: Group = Relationship(back_populates="users")
+    group: "Group" = Relationship(back_populates="schedules")
 
     __tablename__ = 'schedules'
 

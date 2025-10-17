@@ -1,5 +1,4 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Union
 from uuid import uuid4
 
 from .groups_models import Group
@@ -13,5 +12,7 @@ class User(SQLModel, table=True):
     password_hash: bytes
     category: int
 
-    group: "Group" = Relationship(back_populates="users")
-    session: Union["Session", None] = Relationship(back_populates="user")
+    group: Group = Relationship(back_populates="users")
+    session: Session | None = Relationship(back_populates="user")
+
+    __tablename__ = 'users'

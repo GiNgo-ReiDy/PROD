@@ -1,9 +1,9 @@
 from sqlmodel import Field, Relationship, SQLModel
+from .shedules_models import Schedule
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .users_models import User
-    from .shedules_models import Schedule
 
 class Group(SQLModel, table=True):
     id: int | None = Field(primary_key=True, default=None)
