@@ -11,6 +11,8 @@ ___
     * Студент/преподаватель видит сколько GPU доступно в его группе
     * У студента/преподавателя есть возможность запустить своё решение, используя кнопки "Запустить" и "Остановить"
     * У студента/преподавателя есть возможность встать в очередь, если в данный момент времени свободного ресурса GPU нет
+    * У студента/преподавателя есть возможность мониторить сколько еще времени на использование осталось
+
 
 * Нефункциональные требования:
     * MVP
@@ -27,10 +29,47 @@ ___
 ## 3.Компоненты системы и потоки данных ##
 ___
 ## 4. API, модель данных
+* API
+
+* Database
+```mermaid
+classDiagram
+    class Group {
+        id int
+        group_name str
+        gpu_amount int
+        distribution int
+        hour_limitation int
+    }
+    class Session {
+        user_uuid str
+        start_time str
+        break_time str
+        stop_time str | None
+    }
+    class Schedule {
+        id int
+        group_id int
+        day str
+        begin int
+        end int
+    }
+    class Token {
+        access_token str
+        token_type str
+    }
+    class User {
+        uuid str
+        group_id int
+        login str
+        password_hash bytes
+        category int
+    }
+```
 ___
 ## 5. Выбор конкретных технологий ##
 * Языки и стеки для Frontend
-    * React.js
+    * React.js 
 * Языки и стеки для Backend
     * Python
     * FastAPI
