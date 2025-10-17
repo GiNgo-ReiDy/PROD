@@ -11,8 +11,8 @@ router = APIRouter(prefix='/auth')
 @router.post('/login', response_model=Token)
 def user_login(user: LoginDep):
     data = {
-        'sub': user.login,
-        'pwd': hash_password(user.password).hex(),
+        'sub': user.uuid,
+        'pwd': user.password_hash.hex(),
     }
     jwt = create_jwt(data)
     return Token(access_token=jwt)

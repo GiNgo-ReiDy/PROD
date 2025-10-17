@@ -25,6 +25,8 @@ def get_login(form: Annotated[OAuth2PasswordRequestForm, Depends()], session: "S
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if not hash_password(form.password) == user.password_hash:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     return user
 
@@ -37,9 +39,9 @@ def get_user(token: Annotated[str, Depends(oauth2_scheme)], session: "SessionDep
     user = session.get(User, uuid)
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-    if user.password_hash != hash_password(password_hash).hex():
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    if user.password_hash.hex() != password_hash:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Incorrect password")
 
     return user
 
