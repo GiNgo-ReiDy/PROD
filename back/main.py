@@ -2,9 +2,16 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
+from sqlmodel import SQLModel
+
+from back.app.core import engine
+from back.app.api import api_router
+
 import uvicorn
 
-app = FastAPI() 
+
+app = FastAPI()
+app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,9 +21,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.on_event("startup")
-def startup():
-    ...
+
+@app.on_event("startup")
+def strartup():
+    SQLModel.metadata.create_all(bind=engine)
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
