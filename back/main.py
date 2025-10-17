@@ -4,10 +4,12 @@ from fastapi import FastAPI
 from sqlmodel import SQLModel
 
 from back.app.core import engine
+from back.app.api import api_router
 
 import uvicorn
 
 app = FastAPI()
+app.include_router(api_router)
 
 
 @app.on_event("startup")
