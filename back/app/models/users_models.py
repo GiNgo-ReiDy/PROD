@@ -8,7 +8,7 @@ from .sessions_models import Session
 
 class User(SQLModel, table=True):
     uuid: str = Field(primary_key=True, default_factory=lambda: str(uuid4()))
-    group_id: int = Field(default=None, foreign_key="group.id")
+    group_id: int = Field(default=None, foreign_key="groups.id")
     login: str
     password_hash: bytes
     category: int

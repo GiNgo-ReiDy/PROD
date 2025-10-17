@@ -9,12 +9,15 @@ from sqlmodel import Session, select
 from typing import Annotated
 
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+
+
 def get_session():
     with Session(engine) as session:
         yield session
 
 
-def get_login(form: OAuth2PasswordRequestForm, session: "SessionDep"):
+def get_login(form: Annotated[OAuth2PasswordRequestForm, Depends()], session: "SessionDep"):
     # noinspection PyTypeChecker
     user = session.exec(
         select(User).where(User.login == form.username)
@@ -26,7 +29,7 @@ def get_login(form: OAuth2PasswordRequestForm, session: "SessionDep"):
     return user
 
 
-def get_user(token: "TokenDep", session: "SessionDep"):
+def get_user(token: Annotated[str, Depends(oauth2_scheme)], session: "SessionDep"):
     data = read_jwt(token)
     uuid = data.get("sub")
     password_hash = data.get("pwd")
@@ -46,9 +49,6 @@ def get_admin_user(user: Annotated[User, Depends(get_user)]):
         return user
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
-TokenDep = Annotated[str, Depends(oauth2_scheme)]
 
 SessionDep = Annotated[Session, Depends(get_session)]
 LoginDep = Annotated[User, Depends(get_login)]

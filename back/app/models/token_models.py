@@ -1,6 +1,6 @@
-from sqlmodel import SQLModel, Field
+from pydantic import BaseModel, Field
 
 
-class Token(SQLModel):
+class Token(BaseModel):
     access_token: str
-    token_type: str = Field(default='Bearer')
+    token_type: str = Field(default="Bearer")

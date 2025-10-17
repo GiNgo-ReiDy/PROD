@@ -23,7 +23,7 @@ app.add_middleware(
 
 
 @app.on_event("startup")
-def strartup():
+async def strartup():
     SQLModel.metadata.create_all(bind=engine)
 
 @app.get("/", response_class=HTMLResponse)
@@ -34,3 +34,5 @@ async def root():
 async def record():
     # Здесь можно добавить логику записи в БД
     return {"status": 200, "message": "Данные сохранены"}
+
+uvicorn.run(app, host="127.0.0.1", port=8000)
