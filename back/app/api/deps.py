@@ -2,11 +2,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from back.app.core import engine
-from back.app.core.security import read_jwt
+from back.app.core.security import read_jwt, hash_password
 from back.app.models.users_models import User
 
 from sqlmodel import Session, select
 from typing import Annotated
+
 
 def get_session():
     with Session(engine) as session:
@@ -27,12 +28,15 @@ def get_login(form: OAuth2PasswordRequestForm, session: "SessionDep"):
 
 def get_user(token: "TokenDep", session: "SessionDep"):
     data = read_jwt(token)
-    uuid = data.get("uuid")
+    uuid = data.get("sub")
+    password_hash = data.get("pwd")
 
     user = session.get(User, uuid)
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if user.password_hash != hash_password(password_hash).hex():
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
     return user
 
