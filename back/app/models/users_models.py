@@ -1,8 +1,8 @@
 from sqlmodel import SQLModel, Field, Relationship
 from uuid import uuid4
 
-from .groups_models import Group, GroupGetWithUsers
-from .sessions_models import Session
+from .groups_models import Group, GroupGetWithUsers, GroupGet
+from .sessions_models import Session, SessionGet
 
 
 class BaseUser(SQLModel):
@@ -23,6 +23,11 @@ class User(BaseUser, table=True):
 
 class UserGet(BaseUser):
     uuid: str
+    session: SessionGet
+
+
+class UserGetWithGroup(UserGet):
+    group: GroupGet
 
 
 GroupGetWithUsers.model_rebuild()

@@ -13,3 +13,10 @@ class Session(SQLModel, table=True):
     stop_time: str | None = Field(default=None)
 
     user: "User" = Relationship(back_populates="session")
+
+
+class SessionGet(SQLModel):
+    user_uuid: str = Field(foreign_key="users.uuid", primary_key=True)
+    start_time: str
+    break_time: str
+    stop_time: str | None = Field(default=None)

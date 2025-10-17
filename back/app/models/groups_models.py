@@ -22,6 +22,7 @@ class Group(GroupBase, table=True):
 
 
 class GroupGet(GroupBase):
+    id: int
     schedules: list[ScheduleGet]
 
 
