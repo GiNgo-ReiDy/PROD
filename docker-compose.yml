@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: dockerfile
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - ./back:/app/back  # для разработки
       - ./app:/app/app
@@ -34,17 +34,3 @@ services:
       - backend
     restart: unless-stopped
 
-  # Если нужна база данных (раскомментировать при необходимости)
-  # database:
-  #   image: postgres:13
-  #   environment:
-  #     POSTGRES_DB: mydb
-  #     POSTGRES_USER: user
-  #     POSTGRES_PASSWORD: password
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-
-#volumes:
-#  postgres_data:

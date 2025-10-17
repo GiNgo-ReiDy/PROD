@@ -5,5 +5,5 @@ description = "A package to manage GPU resources."
 
 dependencies = [
     "fastapi",
-    "uvicorn",
+    "uvicorn"
 ]
