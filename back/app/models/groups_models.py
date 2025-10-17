@@ -1,12 +1,20 @@
 from sqlmodel import Field, Relationship, SQLModel
-from .schedules_models import Schedules
+from typing import TYPE_CHECKING
 
-class Groups(SQLModel, table=True):
+if TYPE_CHECKING:
+    from .users_models import User
+    from .shedules_models import Schedule
+
+class Group(SQLModel, table=True):
     id: int = Field(primary_key=True)
     group_name : str
     gpu_amount: int
     distribution: int
     hour_limitation: int
-    schedule_limitation: list[Schedules] = Relationship()
+
+    schedules: list["Schedule"] = Relationship(back_populates="group")
+    users: list["User"] = Relationship(back_populates="group")
+
+    __tablename__ = 'groups'
 
 

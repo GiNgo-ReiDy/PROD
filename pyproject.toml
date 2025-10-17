@@ -1,0 +1,9 @@
+[project]
+name = "GPU_manager"
+version = "0.1.0"
+description = "A package to manage GPU resources."
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+]
