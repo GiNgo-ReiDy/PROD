@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Бэкенд приложение
+  backend:
+    build: 
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./back:/app/back  # для разработки
+      - ./app:/app/app
+    environment:
+      - PYTHONPATH=/app
+      - ENVIRONMENT=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx для статики и прокси
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./front:/usr/share/nginx/html  # статические файлы фронтенда
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # Если нужна база данных (раскомментировать при необходимости)
+  # database:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: mydb
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+#volumes:
+#  postgres_data:
