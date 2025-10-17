@@ -9,7 +9,7 @@ def create_jwt(data: dict):
 
 
 def read_jwt(token: str):
-    return jwt.decode(token, 'secret', algorithm='HS256')
+    return jwt.decode(token, 'secret', algorithms=['HS256'])
 
 
 def hash_password(password: str):
