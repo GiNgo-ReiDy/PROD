@@ -2,3 +2,4 @@
 .venv
 .idea
 /back/data.db
+back/**/__pycache__
