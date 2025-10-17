@@ -11,8 +11,8 @@ class BaseUser(SQLModel):
 
 
 class User(BaseUser, table=True):
-    uuid: str = Field(primary_key=True, default_factory=lambda: str(uuid4()))
-    group_id: int = Field(default=None, foreign_key="groups.id")
+    uuid: str | None = Field(primary_key=True, default_factory=lambda: str(uuid4()))
+    group_id: int | None = Field(default=None, foreign_key="groups.id")
     password_hash: bytes
 
     group: Group = Relationship(back_populates="users")

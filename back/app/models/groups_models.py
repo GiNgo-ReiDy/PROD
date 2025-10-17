@@ -1,6 +1,7 @@
 from sqlmodel import Field, Relationship, SQLModel
 from .shedules_models import Schedule, ScheduleGet
 from typing import TYPE_CHECKING
+from pydantic import BaseModel
 
 if TYPE_CHECKING:
     from .users_models import User, UserGet
@@ -34,5 +35,9 @@ class GroupPost(GroupBase):
     pass
 
 
-
-
+class GroupPatch(BaseModel):
+    id: int
+    group_name: str | None = None
+    gpu_amount: int | None = None
+    distribution: int | None = None
+    hour_limitation: int | None = None
