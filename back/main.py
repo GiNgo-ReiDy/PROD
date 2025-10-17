@@ -20,4 +20,9 @@ def startup():
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    return "Hello world!"
+    return ""
+
+@app.post("/api/record")
+async def record():
+    # Здесь можно добавить логику записи в БД
+    return {"status": 200, "message": "Данные сохранены"}
