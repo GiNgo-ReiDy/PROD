@@ -11,7 +11,7 @@ class GroupBase(SQLModel):
     group_name: str
     gpu_amount: int
     distribution: int
-    hour_limitation: int
+    seconds_limitation: int
 
 
 class Group(GroupBase, table=True):
@@ -40,4 +40,4 @@ class GroupPatch(BaseModel):
     group_name: str | None = None
     gpu_amount: int | None = None
     distribution: int | None = None
-    hour_limitation: int | None = None
+    seconds_limitation: int | None = None
