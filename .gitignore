@@ -3,4 +3,3 @@
 .idea
 /back/data.db
 back/**/__pycache__
-.idea
