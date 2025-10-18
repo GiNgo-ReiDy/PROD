@@ -5,6 +5,7 @@ from back.app.core import engine
 from back.app.core.security import read_jwt, hash_password
 from back.app.models.users_models import User
 
+from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, select
 from typing import Annotated
 
@@ -18,13 +19,14 @@ def get_session():
 
 
 def get_login(form: Annotated[OAuth2PasswordRequestForm, Depends()], session: "SessionDep"):
-    # noinspection PyTypeChecker
-    user = session.exec(
-        select(User).where(User.login == form.username)
-    ).one()
+    try:
+        # noinspection PyTypeChecker
+        user = session.exec(
+            select(User).where(User.login == form.username)
+        ).one()
+    except NoResultFound:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
     if not hash_password(form.password) == user.password_hash:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
 
