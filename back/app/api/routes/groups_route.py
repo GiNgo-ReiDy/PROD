@@ -1,7 +1,9 @@
 from typing import Annotated
 
 from back.app.models.groups_models import Group, GroupPost, GroupGetWithUsers, GroupPatch
-from fastapi import APIRouter, HTTPException, Depends, Body
+from back.app.models.shedules_models import SchedulePost, ScheduleGet
+
+from fastapi import APIRouter, HTTPException, Depends, Body, status
 from back.app.api.deps import SessionDep, AdminDep
 from sqlmodel import select
 
@@ -13,10 +15,10 @@ async def get_groups(session: SessionDep):
         select(Group)
     ).all()
     if not groups:
-        raise HTTPException(status_code=204)
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT)
     return groups
 
-@router.post("/", response_model=Group, status_code=201)
+@router.post("/", response_model=Group, status_code=status.HTTP_201_CREATED)
 async def create_group(data: Annotated[GroupPost, Depends()], session: SessionDep, admin: AdminDep):
     group = Group.model_validate(data.model_dump())
     session.add(group)
@@ -30,7 +32,7 @@ def patch_group(data: Annotated[GroupPatch, Depends()], session: SessionDep, adm
     group = session.get(Group, data.id)
 
     if not group:
-        raise HTTPException(status_code=204, detail="Group not found")
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Group not found")
 
     group.sqlmodel_update(data.model_dump(exclude_none=True))
 
@@ -45,9 +47,18 @@ async def delete_group(session: SessionDep, admin: AdminDep, id: int = Body(embe
     group = session.get(Group, id)
 
     if not group:
-        raise HTTPException(status_code=404, detail = 'Group not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = 'Group not found')
 
     session.delete(group)
     session.commit()
 
     return {'detail':'OK'}
+
+
+@router.post('/schedule', response_model=ScheduleGet, status_code=status.HTTP_201_CREATED)
+async def create_schedule(data: Annotated[SchedulePost, Depends()], session: SessionDep, admin: AdminDep):
+    schedule = ScheduleGet.model_validate(data)
+    session.add(schedule)
+    session.commit()
+    session.refresh(schedule)
+    return schedule

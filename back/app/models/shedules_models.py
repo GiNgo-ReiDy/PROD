@@ -23,3 +23,7 @@ class Schedule(BaseSchedule, table=True):
 
 class ScheduleGet(BaseSchedule):
     pass
+
+
+class SchedulePost(BaseSchedule):
+    group_id: int
