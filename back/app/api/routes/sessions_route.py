@@ -1,28 +1,41 @@
-from typing import Annotated
-
-from back.app.models.groups_models import Group, GroupPost, GroupGetWithUsers, GroupPatch
-from fastapi import APIRouter, HTTPException, Depends, Body
-from back.app.api.deps import SessionDep, AdminDep
-from sqlmodel import select
-
-process_running = False
+from fastapi import APIRouter, HTTPException
+from back.app.api.deps import SessionDep
+from datetime import datetime, timedelta
+from back.app.models.sessions_models import Session
+from back.app.api.deps import UserDep
 
 router = APIRouter(prefix = '/sessions')
-@router.post('/start-session')
-async def start_session(session: SessionDep = Depends(SessionDep)):
-    global process_running
-    if process_running:
-        raise HTTPException(status_code = 409) #типо конфликт с текущим состоянием сервера
-    process_running = True
-
-    return {'статус':'процесс запущен'}
 
 
-@router.post('/stop-session')
-async def stop_session(session: SessionDep = Depends(SessionDep)):
-    global process_running
-    if not process_running:
-        raise HTTPException(status_code = 400, detail = 'Процесс не запущен')
-    return {'статус': 'процесс остановлен'}
+@router.post('/start')
+async def start_process(user:UserDep, session: SessionDep):
+    if user.session:
+        raise HTTPException(status_code = 400, detail = 'You are already running this session')
+
+    new_w = Session(
+        start_time=datetime.now(),
+        break_time=datetime.now() + timedelta(seconds=user.group.seconds_limitation),
+    )
+    user.session = new_w
+
+    session.add(user)
+    session.commit()
+
+
+    return {'detail':'OK'}
+
+
+@router.post('/stop')
+async def stop_process(user:UserDep, session: SessionDep):
+    if not user.session:
+        raise HTTPException(status_code = 204, detail = 'There is no active session')
+
+    new_w = Session(
+        stop_time = datetime.now()
+    )
+    user.session = new_w
+    session.add(user)
+    session.commit()
+    return {'detail': 'OK'}
 
 
